@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: my-site-joomla
+    app.kubernetes.io/instance: my-site
+    chart: joomla-7.1.11
+    heritage: Helm
+    release: my-site
+  name: my-site-joomla
+  namespace: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-site-joomla
+      release: my-site
+  template:
+    metadata:
+      labels:
+        app: my-site-joomla
+        chart: joomla-7.1.11
+        release: my-site
+    spec:
+      containers:
+        - env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: 'yes'
+            - name: MARIADB_HOST
+              value: my-site-mariadb
+            - name: MARIADB_PORT_NUMBER
+              value: '3306'
+            - name: JOOMLA_DATABASE_NAME
+              value: bitnami_joomla
+            - name: JOOMLA_DATABASE_USER
+              value: bn_joomla
+            - name: JOOMLA_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: mariadb-password
+                  name: my-site-mariadb
+            - name: JOOMLA_USERNAME
+              value: user
+            - name: JOOMLA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: joomla-password
+                  name: my-site-joomla
+            - name: JOOMLA_EMAIL
+              value: user@example.com
+          image: 'docker.io/bitnami/joomla:3.9.15-debian-10-r10'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /index.php
+              port: http
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: joomla
+          ports:
+            - containerPort: 80
+              name: http
+            - containerPort: 443
+              name: https
+          readinessProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /index.php
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 300m
+              memory: 512Mi
+          volumeMounts:
+            - mountPath: /bitnami/joomla
+              name: joomla-data
+      hostAliases:
+        - hostnames:
+            - status.localhost
+          ip: 127.0.0.1
+      volumes:
+        - name: joomla-data
+          persistentVolumeClaim:
+            claimName: my-site-joomla-joomla
