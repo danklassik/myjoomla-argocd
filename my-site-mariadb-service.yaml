@@ -19,4 +19,4 @@ spec:
     app: mariadb
     component: master
     release: my-site
-  type: ClusterIP
+  type: NodePort
