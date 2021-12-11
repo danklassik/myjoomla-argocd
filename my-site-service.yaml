@@ -20,4 +20,4 @@ spec:
       targetPort: https
   selector:
     app: my-site-joomla
-  type: LoadBalancer
+  type: NodePort
