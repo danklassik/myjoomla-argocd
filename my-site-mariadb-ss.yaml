@@ -115,8 +115,9 @@ spec:
           release: my-site
         name: data
       spec:
+        storageClassName: nfs
         accessModes:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 8Gi
+            storage: 2Gi
