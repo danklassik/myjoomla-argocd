@@ -10,8 +10,9 @@ metadata:
   name: my-site-joomla-joomla
   namespace: web
 spec:
+  storageClassName: nfs
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 8Gi
+      storage: 2Gi
