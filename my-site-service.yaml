@@ -13,11 +13,11 @@ spec:
   externalTrafficPolicy: Cluster
   ports:
     - name: http
-      port: 80
+      port: 8081
       targetPort: http
     - name: https
-      port: 443
+      port: 4431
       targetPort: https
   selector:
     app: my-site-joomla
-  type: LoadBalancer
+  type: NodePort
